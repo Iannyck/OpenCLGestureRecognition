@@ -1,2 +1,2 @@
-# OpenCLGestureRecognition
-Project using OpenCL on Android for foot gesture recognition
+# OpenCVGestureRecognition
+Project using OpenCV on Android for foot gesture recognition
