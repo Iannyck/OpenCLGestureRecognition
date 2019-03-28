@@ -31,10 +31,13 @@ import android.view.View.OnTouchListener;
 import android.view.SurfaceView;
 
 public class MainActivity extends Activity implements OnTouchListener, CvCameraViewListener2 {
+
     private static final String  TAG              = "MainActivity";
 
     private boolean              mIsColorSelected = false;
     private Mat                  mRgba;
+    private Mat                  mRgbaF;
+    private Mat                  mRgbaT;
     private Scalar               mBlobColorRgba;
     private Scalar               mBlobColorHsv;
     private ColorBlobDetector    mDetector;
@@ -109,7 +112,10 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
     }
 
     public void onCameraViewStarted(int width, int height) {
+        Log.i(TAG, "Mat = w: "+width+", h: "+height);
         mRgba = new Mat(height, width, CvType.CV_8UC4);
+        mRgbaF = new Mat(height, width, CvType.CV_8UC4);
+        mRgbaT = new Mat(width, width, CvType.CV_8UC4);
         mDetector = new ColorBlobDetector();
         mSpectrum = new Mat();
         mBlobColorRgba = new Scalar(255);
@@ -174,6 +180,10 @@ public class MainActivity extends Activity implements OnTouchListener, CvCameraV
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
+
+        Core.transpose(mRgba, mRgbaT);
+        Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 0,0, 0);
+        Core.flip(mRgbaF, mRgba, 1 );
 
         if (mIsColorSelected) {
             mDetector.process(mRgba);
